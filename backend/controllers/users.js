@@ -79,17 +79,28 @@ const updateUser = async (req, res) => {
 
     const safeTeamId = team_id?.trim() === '' ? null : team_id;
 
-    const result = await query(
-      `UPDATE users SET
+    // Build dynamic update query so password remains unchanged when not provided
+    const values = [displayName, email, phoneNorm, role, status, safeTeamId];
+    let setClause = `
         display_name = $1,
         email = $2,
         phone_number = $3,
-        password = $4,
-        role = $5,
-        status = $6,
-        team_id = $7
-       WHERE id = $8 RETURNING *`,
-      [displayName, email, phoneNorm, password, role, status, safeTeamId, id]
+        role = $4,
+        status = $5,
+        team_id = $6`;
+
+    if (password && password.trim() !== '') {
+      values.push(password);
+      setClause += `,
+        password = $${values.length}`;
+    }
+
+    values.push(id);
+
+    const result = await query(
+      `UPDATE users SET${setClause}
+       WHERE id = $${values.length} RETURNING *`,
+      values
     );
     res.json(result.rows[0]);
   } catch (err) {
