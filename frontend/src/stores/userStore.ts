@@ -67,7 +67,11 @@ export const useUserStore = create<UserStore>((set) => ({
   updateUser: async (id, user) => {
     const addToast = useToastStore.getState().addToast;
     try {
-      await axios.put(`${API_BASE}/users/${id}`, user);
+      const payload: any = { ...user };
+      if (!payload.password) {
+        delete payload.password; // avoid clearing password when unchanged
+      }
+      await axios.put(`${API_BASE}/users/${id}`, payload);
       await useUserStore.getState().fetchUsers();
       addToast('User updated successfully', 'success');
     } catch (err: any) {
