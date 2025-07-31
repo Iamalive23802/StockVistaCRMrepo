@@ -144,9 +144,9 @@ const addLead = async (req, res) => {
 const updateLead = async (req, res) => {
   const { id } = req.params;
   const {
-    fullName, email, phone, alt_number, notes, deemat_account_name,
-    profession, state_name, capital, segment, gender, dob, age,
-    pan_card_number, aadhar_card_number, payment_history, status,
+    fullName, email, phone, altNumber, notes, deematAccountName,
+    profession, stateName, capital, segment, gender, dob, age,
+    panCardNumber, aadharCardNumber, paymentHistory, status,
     team_id, assigned_to
   } = req.body;
 
@@ -163,26 +163,26 @@ const updateLead = async (req, res) => {
     full_name = $1, email = $2, phone = $3, alt_number = $4, notes = $5,
     deemat_account_name = $6, profession = $7, state_name = $8, capital = $9,
     segment = $10, gender = $11, dob = $12, age = $13, pan_card_number = $14,
-    aadhar_card_number = $15, payment_history = $16, status = $17, 
+    aadhar_card_number = $15, payment_history = $16, status = $17,
     team_id = $18, assigned_to = $19
    WHERE id = $20 RETURNING *`,
   [
     fullName,
     email,
     phone,
-    alt_number || '',
+    altNumber || '',
     notes || '',
-    deemat_account_name || '',
+    deematAccountName || '',
     profession || '',
-    state_name || '',
+    stateName || '',
     capital || '',
     segment || '',
     gender || '',
-    dob?.trim() === '' ? null : dob, 
-    isNaN(Number(age)) ? null : Number(age), 
-    pan_card_number || '',
-    aadhar_card_number || '',
-    payment_history || '',
+    dob?.trim() === '' ? null : dob,
+    isNaN(Number(age)) ? null : Number(age),
+    panCardNumber || '',
+    aadharCardNumber || '',
+    paymentHistory || '',
     status,
     team_id || null,
     assigned_to || null,
