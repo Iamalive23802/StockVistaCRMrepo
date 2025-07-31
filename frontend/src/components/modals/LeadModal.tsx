@@ -142,14 +142,12 @@ const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, lead }) => {
   };
 
   const submitLead = async (forcedStatus?: string) => {
-  const sanitized = [...noteHistory].filter(
-    (n) => !(n.isNew && n.note.trim() === '' && n.status === (lead?.status || 'New'))
-  );
+  const newStatus = noteHistory[0]?.status || 'New';
+  const sanitized = [...noteHistory].filter((n) => !(n.isNew && n.note.trim() === ''));
   const reversed = sanitized.reverse();
   const notesString = reversed
     .map((n) => `${n.note.trim()}__${n.status}__${n.date}`)
     .join('|||');
-  const newStatus = sanitized[0]?.status || 'New';
 
   let finalData = {
     ...formData,
@@ -408,6 +406,9 @@ const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, lead }) => {
                       onChange={(e) => handleNoteChange(i, 'note', e.target.value)}
                       disabled={role === 'relationship_mgr' && !entry.isNew}
                     />
+                    {!entry.isNew && (
+                      <span className="ml-2 text-xs text-green-400">Entry Done</span>
+                    )}
                   </td>
                 </tr>
               ))}
