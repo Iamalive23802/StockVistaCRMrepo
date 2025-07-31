@@ -62,18 +62,28 @@ const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, lead }) => {
         status: lead.status || 'New',
         team_id: lead.team_id || '',
       });
-      const history = lead.notes
-        ?.split('|||')
-        .map((entry) => {
-          const parts = entry.split('__');
-          return {
-            note: parts[0] || '',
-            status: (parts[1] || 'New') as Lead['status'],
-            date: parts[2] || new Date().toISOString(),
-            isNew: false,
-          };
-        }) || [];
-      setNoteHistory(history.reverse());
+      const history =
+        lead.notes
+          ?.split('|||')
+          .map((entry) => {
+            const parts = entry.split('__');
+            return {
+              note: parts[0] || '',
+              status: (parts[1] || 'New') as Lead['status'],
+              date: parts[2] || new Date().toISOString(),
+              isNew: false,
+            };
+          }) || [];
+
+      setNoteHistory([
+        {
+          note: '',
+          status: lead.status || 'New',
+          date: new Date().toISOString(),
+          isNew: true,
+        },
+        ...history.reverse(),
+      ]);
     } else {
       setFormData({
         fullName: '',
@@ -132,11 +142,14 @@ const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, lead }) => {
   };
 
   const submitLead = async (forcedStatus?: string) => {
-  const reversed = [...noteHistory].reverse();
+  const sanitized = [...noteHistory].filter(
+    (n) => !(n.isNew && n.note.trim() === '' && n.status === (lead?.status || 'New'))
+  );
+  const reversed = sanitized.reverse();
   const notesString = reversed
     .map((n) => `${n.note.trim()}__${n.status}__${n.date}`)
     .join('|||');
-  const newStatus = noteHistory[0]?.status || 'New';
+  const newStatus = sanitized[0]?.status || 'New';
 
   let finalData = {
     ...formData,
