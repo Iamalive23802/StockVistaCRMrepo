@@ -75,15 +75,10 @@ const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, lead }) => {
             };
           }) || [];
 
-      setNoteHistory([
-        {
-          note: '',
-          status: lead.status || 'New',
-          date: new Date().toISOString(),
-          isNew: true,
-        },
-        ...history.reverse(),
-      ]);
+      // For existing leads, just populate the saved history without
+      // automatically adding a new empty row. Users can add a row
+      // manually using the "+ Add Row" button.
+      setNoteHistory(history.reverse());
     } else {
       setFormData({
         fullName: '',
