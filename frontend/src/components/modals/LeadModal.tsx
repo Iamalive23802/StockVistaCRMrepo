@@ -373,7 +373,12 @@ const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, lead }) => {
             <tbody>
               {noteHistory.map((entry, i) => (
                 <tr key={i} className="border-b border-gray-700">
-                  <td className="p-2 text-gray-400">{new Date(entry.date).toLocaleString()}</td>
+                  <td className="p-2 text-gray-400">
+                    {new Date(entry.date).toLocaleString()}
+                    {!entry.isNew && (
+                      <span className="block text-xs text-green-400">Entry Done</span>
+                    )}
+                  </td>
                   <td className="p-2">
                     <select
                       className="form-input"
@@ -406,9 +411,6 @@ const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, lead }) => {
                       onChange={(e) => handleNoteChange(i, 'note', e.target.value)}
                       disabled={role === 'relationship_mgr' && !entry.isNew}
                     />
-                    {!entry.isNew && (
-                      <span className="ml-2 text-xs text-green-400">Entry Done</span>
-                    )}
                   </td>
                 </tr>
               ))}
